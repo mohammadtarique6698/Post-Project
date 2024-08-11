@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
+// Thunk to fetch posts
 export const fetchPosts = createAsyncThunk(
   "posts/fetchPosts",
   async ({ start = 0, limit = 10 }) => {
@@ -11,17 +12,21 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
+// Thunk to create a new post
 export const createPost = createAsyncThunk(
   "posts/createPost",
-  async (newPost) => {
+  async (newPost, { dispatch }) => {
     const response = await axios.post(
       "https://jsonplaceholder.typicode.com/posts",
       newPost
     );
+    // Simulate adding the new post to the state
+    dispatch(postAdded(response.data));
     return response.data;
   }
 );
 
+// Slice for posts
 const postsSlice = createSlice({
   name: "posts",
   initialState: {
@@ -29,7 +34,11 @@ const postsSlice = createSlice({
     status: "idle",
     error: null,
   },
-  reducers: {},
+  reducers: {
+    postAdded: (state, action) => {
+      state.items.unshift(action.payload);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchPosts.pending, (state) => {
@@ -42,11 +51,10 @@ const postsSlice = createSlice({
       .addCase(fetchPosts.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-      })
-      .addCase(createPost.fulfilled, (state, action) => {
-        state.items.unshift(action.payload);
       });
   },
 });
 
+// Exporting actions and reducer
+export const { postAdded } = postsSlice.actions;
 export default postsSlice.reducer;

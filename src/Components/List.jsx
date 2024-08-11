@@ -2,9 +2,9 @@ import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { fetchPosts } from "../features/posts/slice";
-import { TypeAnimation } from "react-type-animation"; // Importing TypeAnimation as named export
+import { TypeAnimation } from "react-type-animation";
 
-const PostList = () => {
+const PostList = ({ newPost }) => {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts.items);
   const postStatus = useSelector((state) => state.posts.status);
@@ -16,6 +16,14 @@ const PostList = () => {
     dispatch(fetchPosts({ start: page * 5, limit: 5 }));
   }, [page, dispatch]);
 
+  let updatedPosts = posts;
+
+  if (newPost) {
+    updatedPosts = [newPost, ...posts];
+  } else {
+    updatedPosts = [...posts];
+  }
+
   let content;
 
   if (postStatus === "loading") {
@@ -23,7 +31,7 @@ const PostList = () => {
       <p className="text-center text-lg font-medium text-white">Loading...</p>
     );
   } else if (postStatus === "succeeded") {
-    content = posts.map((post) => (
+    content = updatedPosts.map((post) => (
       <li
         key={post.id}
         className="mb-4 p-6 bg-white bg-opacity-90 shadow-lg rounded-lg hover:bg-blue-100 transition-all"
@@ -34,7 +42,7 @@ const PostList = () => {
               cursor={false}
               sequence={[post.title, 1000, ""]}
               repeat={Infinity}
-              wrapper="span" // Wraps the text in a span to ensure proper styling
+              wrapper="span"
             />
           </h2>
           <p className="text-gray-700 mt-2">{post.body}</p>

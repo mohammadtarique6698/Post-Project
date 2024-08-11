@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { createPost } from "../features/posts/slice";
 
-const PostForm = () => {
+const PostForm = ({ onPostCreated }) => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [error, setError] = useState(null);
@@ -18,7 +18,8 @@ const PostForm = () => {
     }
 
     try {
-      await dispatch(createPost({ title, body })).unwrap();
+      const createdPost = await dispatch(createPost({ title, body })).unwrap();
+      if (onPostCreated) onPostCreated(createdPost);
       navigate("/");
     } catch (error) {
       setError("Failed to create post");
