@@ -1,8 +1,8 @@
 import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
-import PostList from "./components/List.jsx";
-import PostDetail from "./components/Details.jsx";
-import PostForm from "./components/Form.jsx";
+import PostList from "./Components/List.jsx";
+import PostDetail from "./Components/Details.jsx";
+import PostForm from "./Components/Form.jsx";
 import Footer from "./Components/Footer.jsx";
 
 const App = () => {
